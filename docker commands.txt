@@ -1,0 +1,215 @@
+What is the version of Docker Server Engine running on the Host?
+	docker --version
+	
+How many containers are running on this host?
+	docker ps
+	
+How many images are available on this host?
+	docker images
+	
+Run a container using the redis image
+	docker run redis
+	docker run -d redis (better do this, so that it detaches from your terminal and you can continue work)
+	
+Stop the container you just created
+	docker stop "container name"
+	
+How many containers are RUNNING on this host now?
+	docker ps
+	
+How many containers are PRESENT on the host now?
+Including both Running and Not Running ones	
+	docker ps -a
+	
+What is the image used to run the nginx-1 container?
+	nginx-alpine
+	
+What is the name of the container created using the ubuntu image?
+	awesome northcut
+	
+What is the state of the stopped alpine container?
+		exited
+		
+Delete all containers from the Docker Host.
+Both Running and Not Running ones. Remember you may have to stop containers before deleting them
+		first stop running container usign docker rm "" ""
+		then delete containers usign
+		
+Run an instance of kodekloud/simple-webapp with a tag blue and map port 8080 on the container to 38282 on the host.
+			Run the command: docker run -p 38282:8080 kodekloud/simple-webapp:blue
+			
+We just downloaded the code of an application. What is the base image used in the Dockerfile?
+Inspect the Dockerfile in the webapp-color directory.
+You can either open the file using vi /root/webapp-color/Dockerfile (or using commands such as cat/more/less/vim e.t.c) 
+and look for the FROM instruction or search for it directly using grep -i FROM /root/webapp-color/Dockerfile
+
+to build an image with tag
+		docker build . -t doc-flask:v1
+		or
+		docker build -t webapp-color .
+		(dot can come last or inbetween)
+		
+What is the base Operating System used by the python:3.6 image?
+If required, run an instance of the image to figure it out.	
+	Run docker run python:3.6 cat /etc/*release* command.
+
+Run a container named blue-app using image kodekloud/simple-webapp and set the environment variable APP_COLOR to blue. 
+Make the application available on port 38282 on the host. The application listens on port 8080.		
+	Run the command : docker run -p 38282:8080 --name blue-app -e APP_COLOR=blue -d kodekloud/simple-webapp
+To know the env field from within a webapp container, run docker exec -it webapp env
+
+Deploy a mysql database using the mysql image and name it mysql-db.
+Set the database password to use db_pass123. 
+Lookup the mysql image on Docker Hub and identify the correct environment variable to use for setting the root password.
+Run the command: docker run -d -e MYSQL_ROOT_PASSWORD=db_pass123 --name mysql-db mysql
+To know the env field from within a mysql-db container, run docker exec -it mysql-db env
+
+Next, create a simple container called clickcounter with the image kodekloud/click-counter, 
+link it to the redis container that we created in the previous task and then expose it on the host port 8085
+The clickcounter app run on port 5000.
+if you are unsure, check the hints section for the exact commands.
+Run the command: docker run -d --name=clickcounter --link redis:redis -p 8085:5000 kodekloud/click-counter
+
+Create a docker-compose.yml file under the directory /root/clickcounter. Once done, run docker-compose up.
+The compose file should have the exact specification as follows -
+redis service specification - Image name should be redis:alpine.
+clickcounter service specification - Image name should be kodekloud/click-counter, 
+app is run on port 5000 and expose it on the host port 8085 in the compose file.
+Use the below compose file:
+
+services:
+  redis:
+    image: redis:alpine
+  clickcounter:
+    image: kodekloud/click-counter
+    ports:
+    - 8085:5000
+version: '3.0'
+Then run a docker-compose up -d command. To run containers in a background, added -d flag.
+
+What location are the files related to the docker containers and images stored?
+/var/lib/docker
+
+Run a mysql container again, but this time map a volume to the container so that the data stored by the container is stored at /opt/data on the host.
+Use the same name : mysql-db and same password: db_pass123 as before. Mysql stores data at /var/lib/mysql inside the container.
+Run the command: docker run -v /opt/data:/var/lib/mysql -d --name mysql-db -e MYSQL_ROOT_PASSWORD=db_pass123 mysql
+
+Explore the current setup and identify the number of networks that exist on this system.
+docker network ls
+
+What is the subnet configured on bridge network?
+Run the command docker network inspect bridge
+
+Run a container named alpine-2 using the alpine image and attach it to the none network.
+Run the command: docker run --name alpine-2 --network=none alpine
+
+Create a new network named wp-mysql-network using the bridge driver. Allocate subnet 182.18.0.1/24. Configure Gateway 182.18.0.1
+Run the command: docker network create --driver bridge --subnet 182.18.0.1/24 --gateway 182.18.0.1 wp-mysql-network
+Inspect the created network by docker network inspect wp-mysql-network
+
+Deploy a web application named webapp using the kodekloud/simple-webapp-mysql image. Expose the port to 38080 on the host.
+The application makes use of two environment variable:
+1: DB_Host with the value mysql-db.
+2: DB_Password with the value db_pass123.
+Make sure to attach it to the newly created network called wp-mysql-network.
+Also make sure to link the MySQL and the webapp container.
+Run the command: 
+docker run --network=wp-mysql-network -e DB_Host=mysql-db -e DB_Password=db_pass123 -p 38080:8080 --name webapp --link mysql-db:mysql-db -d kodekloud/simple-webapp-mysql
+
+send inputs to docker hosted image
+	docker run -i kodekloud/simple-prompt-docker (This will take input)
+	docker run -it kodekloud/simple-prompt-docker (This will take input, also print the input statement like enter your name)
+	
+run image using custom name "webapp"	
+	docker run -d --name webapp nginx:1.14-alpine
+	
+remove unused containers
+	docker container prune
+	
+List images
+	docker image ls
+	
+Run image mentioning port number
+	docker run -p 5000:5000 dockerdemo:latest
+	docker run --publish 5000:5000 python-docker (same)
+	docker build . -t dockerdemo:latest
+	docker run -d -p 5000:5000 --name rest-server python-docker
+	
+list running containers
+	docker ps
+	
+list all containers
+	docker ps -a
+	
+inspect containers
+	docker inspect "just give starting two letters of any container name"
+	
+interact with container
+	docker exec -it "starting letters of container" cat /etc/hosts
+	
+remove container	
+	docker rm ""
+	
+remove image
+	docker rmi
+	
+pull image
+	docker pull "image name"
+	
+execute to see container info
+	docker exec "container name" cat /etc/hosts
+	
+Use volumes to avoid data loss from container (Tried in local)
+Usually docker related data will be stored in the network created by docker.
+https://stackoverflow.com/questions/43181654/locating-data-volumes-in-docker-desktop-windows
+\\wsl$\docker-desktop-data\version-pack-data\community\docker\volumes\ (Put another slash at the front, total two slash) Give the above command in the file explorer..
+We need to create volume and if we mention it while running the image, it uses that volume.
+In this way, even if the container gets removed, we can run the image again mentioning volume, it runs in different container, but data is persisted from
+previous container..
+docker volume create "your volume name"
+docker volume inspect "your volume name" (for reference)
+docker run -d -v "your volume name:/app" -p 127.0.0.1:5000:80 pytorchflask
+https://www.youtube.com/watch?v=Ff0OCpEwDnQ	
+	
+map volume in postgresql image
+	(It looks for image locally, if not pulls)
+	docker run -d --name postgresexample -e POSTGRES_PASSWORD=12345 -e POSTGRES_USER=raajesh -v pgvolume:/var/lib/postgresql/data -p 5432:5432 postgres:12
+	here we are giving container name as postgresexample, volume name as pgvolume, storage to /var/lib/postgresql/data, and setting environment variables.
+	docker run --rm -d -v mysql:/var/lib/mysql -v mysql_config:/etc/mysql -p 3306:3306 --network mysqlnet --name mysqldb -e MYSQL_ROOT_PASSWORD=p@ssw0rd1 mysql
+	here we are letting docker daemon to remove all container files once exits (--rm), network as mysqlnet
+	docker run --rm -d --network mysqlnet --name rest-server -p 5000:5000 python-docker-dev
+	here we are asking our python to use same network where mysql used, so it can interact...
+	
+	
+prune stopped volumes
+	docker volume prune
+	
+to get into postgresql container and insert things into DB
+	docker exec -it 62 psql -U raajesh
+	here we are in execution (interactive) mode, 62 is container number, psql is command once we get in to execution, raajesh is user name which we given above while running the container
+	now you can change container, give the same volume - pgvolume, you can retrieve your table values..
+	docker exec -ti mysqldb mysql -u root -p
+	docker exec -it <mycontainer> bash
+On Windows CMD (not switching to bash)
+docker exec -it <container-id> /bin/sh
+On Windows CMD (after switching to bash)
+docker exec -it <container-id> //bin//sh
+or
+winpty docker exec -it <container-id> //bin//sh
+On Git Bash
+winpty docker exec -it <container-id> //bin//sh	
+tag docker image
+	docker tag python-docker:latest python-docker:v1.0.0
+	
+network
+Now we’ll create a network that our application and database will use to talk to each other. 
+The network is called a user-defined bridge network and gives us a nice DNS lookup service which we can use when creating our connection string.
+ docker network create mysqlnet	
+	
+--rm flag in docker run command
+The --rm flag is there to tell the Docker Daemon to clean up the container and remove the file system after the container exits. 
+This helps you save disk space after running short-lived containers like this one, that we only started to print "Hello, World!".	
+	
+	
+	
+	

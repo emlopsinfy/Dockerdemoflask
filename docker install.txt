@@ -1,0 +1,56 @@
+Windows 10 Home 
+Youtube video referred - https://www.youtube.com/watch?v=58GJrAPuIF8&t=511s   
+
+Docker requires Hyper-V:  
+  
+Windows 10 Home does not have Hyper-V where Windows 10 Enterprise and Windows 10 Server version has!  
+Hyper-V is a feature that allows Linux VM to work on Windows.  
+Docker Container needs Hyper-V to work properly...   
+
+Then how to install docker on windows 10 home:  
+  
+Check windows 10 Home requirements to install docker.  
+https://docs.docker.com/desktop/windows/install/  
+Windows version should be higher than 2004, to check press win+R, mostly it will be latest version, so no problem.  
+
+ENABLE VIRTUALIZATION 
+I FOLLOWED THIS LINK - https://www.youtube.com/watch?v=MOuTxfzCvMY
+you can check in task manager, then performance..  
+
+Then I installed docker from docker hub..  
+https://hub.docker.com/editions/community/docker-ce-desktop-windows/  
+While installing docker desktop:  
+There will be two configurations it will ask - Enable WSL2 Windows Features, Add shortcut to desktop, check these two boxes.  
+WSL2 lets us to use Docker Desktop on windows.  
+RESTART ONCE INSTALLATION COMPLETED.  
+
+It may give popup and say - WSL2 installation is incomplete.  
+The WSL 2 Linux Kernel is now installed using a separate MSI update package.  
+Please click the link and follow the instructions to install the kernel update.  
+https://aka.ms/wsl2kernel
+download latest wsl..  
+Restart windows and restart docker..  
+
+
+Windows 10 Enterprise:  
+While installing docker desktop, it wil ask three - Enable Hyper-V Windows Features, Install required Windows components for WSL2, add shortcut to desktop, check all 3  
+RESTART..  
+
+It may give popup and say - WSL2 installation is incomplete.  
+The WSL 2 Linux Kernel is now installed using a separate MSI update package.  
+Please click the link and follow the instructions to install the kernel update.  
+https://aka.ms/wsl2kernel
+download latest wsl..  
+Restart windows and restart docker..  
+
+there are two parts while developing using docker on windows. 
+1. where you use wsl to do your development - this is similar to how you would work on an ubuntu environment. not a lot of difference. all you will have 
+to do is understand how wsl works. i would recommend to use wsl2 which will enable easy installation of docker as well without the requirement of windows pro 
+or hyper-virtualization. on windows home, there is no hyper-v and if you don't have wsl2 you won't be able to install docker desktop at all. 
+
+2. when you use git bash or command prompt or powershell - things get a bit complicated here. when you install docker, 
+you will have to select a wsl2 engine. this way you don't have to worry about accessing from wsl. 
+you can directly access docker from any of the command line which windows gives by default. 
+the problem would appear when you try to mount. so here you would need to understand how git bash works and understand it's 
+path notations to mount volumes from command prompt/powershell.
+
